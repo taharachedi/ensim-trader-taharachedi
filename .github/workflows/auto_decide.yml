@@ -16,11 +16,15 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: pip install requests
-      - run: python scripts/algorithm.py
-      - run: |
+      - run: pip install requests numpy
+      - name: Decide (my signal)
+        run: python scripts/algorithm.py
+      - name: Backtest vs baselines
+        run: python scripts/backtest.py
+      - name: Commit results
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add decision.json docs/data/decision_log.json
+          git add decision.json docs/data/decision_log.json docs/data/backtest.json
           git commit -m "Update decision [automated]" || echo "Nothing to commit"
           git push
