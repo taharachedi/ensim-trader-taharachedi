@@ -1,0 +1,55 @@
+{
+  "entries": [
+    {
+      "run_at": "2026-11-10T22:36:04Z",
+      "market_tick": 328,
+      "registered": false,
+      "money": 1000.0,
+      "holdings": {
+        "A": 1000.0,
+        "B": 1000.0,
+        "C": 1000.0
+      },
+      "decision": {
+        "A": 1.0,
+        "B": 0.564,
+        "C": 0.522
+      },
+      "details": {
+        "A": {
+          "signal": 1.0,
+          "period": 48,
+          "r2": 0.982,
+          "price": 4.3515,
+          "forecast": 5.4013,
+          "horizon": 14,
+          "expected_move_pct": 24.13,
+          "reason": "buy: cycle 48 ticks (R2 0.98) forecasts +24.1% in 14 ticks",
+          "final": 1.0
+        },
+        "B": {
+          "signal": 0.564,
+          "period": 96,
+          "r2": 0.984,
+          "price": 10.5535,
+          "forecast": 11.1587,
+          "horizon": 28,
+          "expected_move_pct": 5.73,
+          "reason": "buy: cycle 96 ticks (R2 0.98) forecasts +5.7% in 28 ticks",
+          "final": 0.564
+        },
+        "C": {
+          "signal": 0.522,
+          "period": 24,
+          "r2": 0.981,
+          "price": 1.5563,
+          "forecast": 1.6391,
+          "horizon": 7,
+          "expected_move_pct": 5.32,
+          "reason": "buy: cycle 24 ticks (R2 0.98) forecasts +5.3% in 7 ticks",
+          "final": 0.522
+        }
+      }
+    }
+  ]
+}
