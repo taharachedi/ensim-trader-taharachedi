@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENSIM Trader · Taha</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:#f5f7fb; color:#1f2937; }
+  header { background:#0f3d3e; color:#fff; padding:22px 16px; }
+  header h1 { margin:0 0 6px; font-size:1.5rem; }
+  header p { margin:0; opacity:.85; font-size:.9rem; }
+  main { max-width:1150px; margin:0 auto; padding:16px 16px 40px; }
+  h2 { font-size:1.06rem; margin:26px 0 10px; display:flex; align-items:center; gap:8px; }
+  .pill { font-size:.72rem; font-weight:600; padding:2px 8px; border-radius:99px; background:#e0f2f1; color:#0f3d3e; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  @media (max-width:820px){ .two { grid-template-columns:1fr; } }
+  .card { background:#fff; border-radius:12px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .label { color:#6b7280; font-size:.84rem; }
+  .value { font-size:1.55rem; font-weight:700; margin-top:4px; }
+  .sub { color:#6b7280; font-size:.78rem; margin-top:4px; }
+  .good .value { color:#15803d; } .bad .value { color:#b91c1c; } .warn .value { color:#b45309; }
+  .box { position:relative; height:300px; margin-top:8px; }
+  .why { color:#6b7280; font-size:.78rem; margin:8px 0 0; }
+  .banner { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; padding:10px 14px; border-radius:10px; font-size:.88rem; margin-top:14px; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  th, td { text-align:left; padding:7px 6px; border-bottom:1px solid #e5e7eb; vertical-align:top; }
+  th { color:#6b7280; font-weight:600; }
+  .wrap { overflow-x:auto; }
+  .buy { color:#15803d; font-weight:600; } .sell { color:#b91c1c; font-weight:600; } .hold { color:#6b7280; }
+  .sig { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+  @media (max-width:820px){ .sig { grid-template-columns:1fr; } }
+  .sbox { position:relative; height:210px; }
+  footer { text-align:center; color:#6b7280; font-size:.8rem; padding:20px; }
+  a { color:#0f766e; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📈 ENSIM Trade Center · trader Taha</h1>
+  <p>Décision : signal « prévision de cycle » · marché au tick <span id="tick">…</span> · ma dernière décision : <span id="last">…</span></p>
+</header>
+
+<main>
+  <div class="banner" id="reg" style="display:none"></div>
+
+  <h2><span class="pill">1</span> Performance vs baselines</h2>
+  <div class="grid" id="kperf"></div>
+  <div class="two">
+    <div class="card"><b>Valeur totale au fil des ticks (backtest walk-forward)</b><div class="box"><canvas id="perf"></canvas></div>
+      <p class="why">Courbes superposées : c'est la seule façon de voir <i>quand</i> je bats les 3 baselines, pas seulement le score final. Même départ pour tous (1000 € + 1000 unités de chaque produit).</p></div>
+    <div class="card wrap"><b>Classement réel du marché (en direct)</b>
+      <table><thead><tr><th>#</th><th>Trader</th><th>Valeur totale</th><th>Type</th></tr></thead><tbody id="lb"></tbody></table>
+      <p class="why">Tableau : on compare des montants exacts à un instant, pas une tendance.</p></div>
+  </div>
+
+  <h2><span class="pill">2</span> Risque</h2>
+  <div class="grid" id="krisk"></div>
+  <div class="two">
+    <div class="card"><b>Drawdown : baisse depuis le plus haut (%)</b><div class="box"><canvas id="dd"></canvas></div>
+      <p class="why">Aire sous zéro : plus elle est profonde, plus j'ai perdu depuis mon meilleur niveau. Un rendement élevé obtenu avec de grosses chutes n'est pas équivalent à un rendement régulier.</p></div>
+    <div class="card"><b>Rendement vs risque</b><div class="box"><canvas id="rr"></canvas></div>
+      <p class="why">Nuage de points : chaque trader est placé selon son risque (volatilité par tick) et son rendement. Le meilleur compromis est en haut à gauche.</p></div>
+  </div>
+
+  <h2><span class="pill">3</span> Signal par produit</h2>
+  <div class="sig" id="sigcards"></div>
+  <p class="why">Prix observé (ligne) et prévision du cycle à l'horizon utilisé (point). Si la prévision est au-dessus du prix, j'achète ; en dessous, je vends ; la taille de l'ordre est proportionnelle à l'écart × R².</p>
+
+  <h2><span class="pill">4</span> Journal des décisions</h2>
+  <div class="card wrap">
+    <table><thead><tr><th>Exécution</th><th>Tick</th><th>A</th><th>B</th><th>C</th><th>Raison (produit avec le signal le plus fort)</th></tr></thead><tbody id="log"></tbody></table>
+  </div>
+</main>
+
+<footer>Projet BI · ENSIM 5A · <a href="https://github.com/taharachedi/ensim-trader-taharachedi">code source</a></footer>
+
+<script>
+const MARKET_URL = "https://raw.githubusercontent.com/exofri/ensim-trade-center/refs/heads/main/docs/data/market.json";
+const LEADERBOARD_URL = "https://raw.githubusercontent.com/exofri/ensim-trade-center/refs/heads/main/docs/data/leaderboard.json";
+const bust = '?t=' + Date.now();
+const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = x => Math.round(x).toLocaleString('fr-FR');
+const card = (l, v, s, c = '') => `<div class="card ${c}"><div class="label">${esc(l)}</div><div class="value">${esc(v)}</div><div class="sub">${esc(s)}</div></div>`;
+const COLORS = { mine:'#0f766e', random_trader:'#9ca3af', random_buyer:'#f59e0b', random_seller:'#6366f1', hold:'#d1d5db' };
+const LABELS = { mine:'Mon algorithme', random_trader:'random_trader', random_buyer:'random_buyer', random_seller:'random_seller', hold:'ne rien faire' };
+const cls = v => v > 0.05 ? 'buy' : v < -0.05 ? 'sell' : 'hold';
+const word = v => v > 0.05 ? 'achat' : v < -0.05 ? 'vente' : 'attente';
+
+Promise.all([
+  fetch('data/backtest.json' + bust).then(r => r.json()),
+  fetch('data/decision_log.json' + bust).then(r => r.json()),
+  fetch(MARKET_URL + bust).then(r => r.json()),
+  fetch(LEADERBOARD_URL + bust).then(r => r.json()).catch(() => ({ leaderboard: [] }))
+]).then(([bt, log, market, lb]) => {
+  const entries = log.entries, last = entries[entries.length - 1], S = bt.stats, hist = market.history;
+  document.getElementById('tick').textContent = hist[hist.length - 1].t;
+  document.getElementById('last').textContent = new Date(last.run_at).toLocaleString('fr-FR');
+  if (!last.registered) {
+    const b = document.getElementById('reg');
+    b.style.display = 'block';
+    b.textContent = "⚠️ Pas encore enregistré par l'organisateur : le marché ne lit pas encore mon decision.json. La performance affichée vient du backtest sur l'historique réel ; le classement réel me montrera dès l'enregistrement.";
+  }
+
+  // 1. Performance
+  const best = Math.max(S.random_trader.final, S.random_buyer.final, S.random_seller.final);
+  document.getElementById('kperf').innerHTML =
+    card('Valeur finale (backtest)', fmt(S.mine.final), 'départ ≈ ' + fmt(bt.series.mine[0])) +
+    card('Rendement', (S.mine.return_pct > 0 ? '+' : '') + S.mine.return_pct + ' %', 'sur ' + bt.ticks.length + ' ticks', S.mine.return_pct > 0 ? 'good' : 'bad') +
+    card('Écart vs meilleure baseline', '+' + fmt(S.mine.final - best), 'meilleure baseline : ' + fmt(best), S.mine.final > best ? 'good' : 'bad') +
+    card('Ne rien faire', fmt(S.hold.final), 'référence passive');
+  const ds = ['mine', 'random_trader', 'random_buyer', 'random_seller'].map(k => ({
+    label: LABELS[k], data: bt.series[k], borderColor: COLORS[k], backgroundColor: COLORS[k],
+    borderWidth: k === 'mine' ? 3 : 1.5, pointRadius: 0, tension: .2 }));
+  new Chart(document.getElementById('perf'), { type: 'line', data: { labels: bt.ticks, datasets: ds },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      scales: { x: { title: { display: true, text: 'Tick' }, ticks: { maxTicksLimit: 10 } }, y: { title: { display: true, text: 'Valeur totale' } } } } });
+  document.getElementById('lb').innerHTML = (lb.leaderboard || []).map((r, i) =>
+    `<tr><td>${i + 1}</td><td>${esc(r.name)}${r.id === 'taharachedi' ? ' ⭐' : ''}</td><td>${fmt(r.total_value)}</td><td>${r.baseline ? 'baseline' : 'trader'}</td></tr>`).join('') ||
+    '<tr><td colspan="4">classement indisponible</td></tr>';
+
+  // 2. Risk
+  const dd = v => { let m = -Infinity; return v.map(x => { m = Math.max(m, x); return +(100 * (x / m - 1)).toFixed(2); }); };
+  document.getElementById('krisk').innerHTML =
+    card('Pire drawdown (moi)', S.mine.max_drawdown_pct + ' %', 'random_trader : ' + S.random_trader.max_drawdown_pct + ' %', 'warn') +
+    card('Volatilité par tick (moi)', S.mine.volatility_pct + ' %', 'random_buyer : ' + S.random_buyer.volatility_pct + ' %') +
+    card('Rendement / volatilité', (S.mine.return_pct / S.mine.volatility_pct).toFixed(0), 'random_seller : ' + (S.random_seller.return_pct / S.random_seller.volatility_pct).toFixed(0)) +
+    card('Réserve de cash', '50 €', 'budget guard : jamais de dépense en dessous');
+  new Chart(document.getElementById('dd'), { type: 'line', data: { labels: bt.ticks, datasets: ['mine', 'random_trader'].map(k => ({
+      label: LABELS[k], data: dd(bt.series[k]), borderColor: COLORS[k], backgroundColor: COLORS[k] + '33', fill: true, pointRadius: 0, borderWidth: 1.5 })) },
+    options: { maintainAspectRatio: false, scales: { x: { ticks: { maxTicksLimit: 10 } }, y: { max: 0, title: { display: true, text: '% sous le plus haut' } } } } });
+  new Chart(document.getElementById('rr'), { type: 'scatter', data: { datasets: Object.keys(S).map(k => ({
+      label: LABELS[k], data: [{ x: S[k].volatility_pct, y: S[k].return_pct }], backgroundColor: COLORS[k], pointRadius: k === 'mine' ? 9 : 6 })) },
+    options: { maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Volatilité par tick (%)' }, beginAtZero: true }, y: { title: { display: true, text: 'Rendement total (%)' } } } } });
+
+  // 3. Product-level signal
+  const N = 120, recent = hist.slice(-N);
+  document.getElementById('sigcards').innerHTML = market.products.map(p => {
+    const d = last.details[p];
+    return `<div class="card"><b>Produit ${p}</b> · <span class="${cls(d.final)}">${word(d.final)} ${d.final}</span>
+      <div class="sub">cycle ${d.period ?? '–'} ticks · R² ${d.r2 ?? '–'} · prévision ${d.expected_move_pct ?? 0} % dans ${d.horizon ?? '–'} ticks</div>
+      <div class="sbox"><canvas id="s${p}"></canvas></div></div>`; }).join('');
+  market.products.forEach(p => {
+    const d = last.details[p], labels = recent.map(r => r.t);
+    const fc = labels.map(() => null);
+    if (d.forecast) { labels.push(recent[recent.length - 1].t + d.horizon); fc.push(d.forecast); }
+    new Chart(document.getElementById('s' + p), { type: 'line',
+      data: { labels, datasets: [
+        { label: 'prix', data: recent.map(r => r[p]), borderColor: '#334155', pointRadius: 0, borderWidth: 1.5 },
+        { label: 'prévision', data: fc, borderColor: '#0f766e', backgroundColor: '#0f766e', pointRadius: 6, showLine: false } ] },
+      options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 6 } } } } });
+  });
+
+  // 4. Decision log
+  document.getElementById('log').innerHTML = entries.slice().reverse().slice(0, 50).map(e => {
+    const strongest = market.products.reduce((a, b) => Math.abs(e.decision[a]) >= Math.abs(e.decision[b]) ? a : b);
+    return `<tr><td>${new Date(e.run_at).toLocaleString('fr-FR')}</td><td>${e.market_tick}</td>` +
+      market.products.map(p => `<td class="${cls(e.decision[p])}">${e.decision[p]}</td>`).join('') +
+      `<td>${strongest} — ${esc(e.details[strongest].reason)}</td></tr>`; }).join('');
+}).catch(err => { document.getElementById('tick').textContent = 'erreur de chargement'; console.error(err); });
+</script>
+</body>
+</html>
