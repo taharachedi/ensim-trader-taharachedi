@@ -4,6 +4,7 @@ import requests
 # Feeds from the organizer (ENSIM Trade Center).
 MARKET_URL = "https://raw.githubusercontent.com/exofri/ensim-trade-center/refs/heads/main/docs/data/market.json"
 HOLDINGS_URL = "https://raw.githubusercontent.com/exofri/ensim-trade-center/refs/heads/main/traders/taharachedi/holdings.json"
+LEADERBOARD_URL = "https://raw.githubusercontent.com/exofri/ensim-trade-center/refs/heads/main/docs/data/leaderboard.json"
 
 MIN_MONEY_RESERVE = 50  # never let a buy signal spend below this much money
 
@@ -113,6 +114,14 @@ def main():
         holdings = {"money": 1000.0, "products": {p: 1000.0 for p in market["products"]}}
         registered = False
 
+    try:
+        # Snapshot of the public leaderboard (total value of every trader incl. the 3
+        # baselines): the organizer only publishes the current value, so logging it at
+        # every run is what builds my "performance vs baselines over time" chart.
+        leaderboard = {r["id"]: r["total_value"] for r in fetch_json(LEADERBOARD_URL)["leaderboard"]}
+    except Exception:
+        leaderboard = {}
+
     products = market["products"]
     history = market["history"]
     decision, details = {}, {}
@@ -143,6 +152,7 @@ def main():
         "holdings": {p: round(holdings["products"][p], 2) for p in products},
         "decision": {p: decision[p] for p in products},
         "details": details,
+        "leaderboard": leaderboard,
     })
     log["entries"] = log["entries"][-500:]
     os.makedirs("docs/data", exist_ok=True)
