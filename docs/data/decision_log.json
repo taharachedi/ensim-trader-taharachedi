@@ -340,6 +340,64 @@
         "random_buyer": 17241.7,
         "random": 15480.12
       }
+    },
+    {
+      "run_at": "2026-11-12T07:39:02Z",
+      "market_tick": 333,
+      "registered": false,
+      "money": 1000.0,
+      "holdings": {
+        "A": 1000.0,
+        "B": 1000.0,
+        "C": 1000.0
+      },
+      "decision": {
+        "A": 1.0,
+        "B": 0.931,
+        "C": -1.0
+      },
+      "details": {
+        "A": {
+          "signal": 1.0,
+          "period": 48,
+          "r2": 0.982,
+          "price": 4.5814,
+          "forecast": 5.6823,
+          "horizon": 14,
+          "expected_move_pct": 24.03,
+          "reason": "buy: cycle 48 ticks (R2 0.98) forecasts +24.0% in 14 ticks",
+          "final": 1.0
+        },
+        "B": {
+          "signal": 1.0,
+          "period": 96,
+          "r2": 0.984,
+          "price": 10.2024,
+          "forecast": 11.5027,
+          "horizon": 28,
+          "expected_move_pct": 12.75,
+          "reason": "buy: cycle 96 ticks (R2 0.98) forecasts +12.7% in 28 ticks",
+          "final": 0.931
+        },
+        "C": {
+          "signal": -1.0,
+          "period": 24,
+          "r2": 0.98,
+          "price": 1.6256,
+          "forecast": 0.9944,
+          "horizon": 7,
+          "expected_move_pct": -38.83,
+          "reason": "sell: cycle 24 ticks (R2 0.98) forecasts -38.8% in 7 ticks",
+          "final": -1.0
+        }
+      },
+      "leaderboard": {
+        "random_trader": 18216.8,
+        "random_seller": 18005.8,
+        "tester": 17876.49,
+        "random_buyer": 17276.15,
+        "random": 15488.06
+      }
     }
   ]
 }
