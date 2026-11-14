@@ -812,6 +812,66 @@
         "random_buyer": 17650.36,
         "random": 15506.46
       }
+    },
+    {
+      "run_at": "2026-11-14T13:57:26Z",
+      "market_tick": 339,
+      "registered": true,
+      "money": 118.61,
+      "holdings": {
+        "A": 1172.7,
+        "B": 1068.89,
+        "C": 500.0
+      },
+      "decision": {
+        "A": 0.134,
+        "B": 0.065,
+        "C": -1.0
+      },
+      "details": {
+        "A": {
+          "signal": 0.952,
+          "period": 48,
+          "r2": 0.982,
+          "price": 5.1366,
+          "forecast": 5.6348,
+          "horizon": 14,
+          "expected_move_pct": 9.7,
+          "reason": "buy: cycle 48 ticks (R2 0.98) forecasts +9.7% in 14 ticks",
+          "final": 0.134
+        },
+        "B": {
+          "signal": 1.0,
+          "period": 96,
+          "r2": 0.984,
+          "price": 10.5032,
+          "forecast": 11.942,
+          "horizon": 28,
+          "expected_move_pct": 13.7,
+          "reason": "buy: cycle 96 ticks (R2 0.98) forecasts +13.7% in 28 ticks",
+          "final": 0.065
+        },
+        "C": {
+          "signal": -1.0,
+          "period": 24,
+          "r2": 0.98,
+          "price": 1.1861,
+          "forecast": 0.8749,
+          "horizon": 7,
+          "expected_move_pct": -26.23,
+          "reason": "sell: cycle 24 ticks (R2 0.98) forecasts -26.2% in 7 ticks",
+          "final": -1.0
+        }
+      },
+      "leaderboard": {
+        "random_trader": 18847.69,
+        "tester": 18010.83,
+        "random_seller": 18005.8,
+        "taharachedi": 17962.11,
+        "gaspard": 17825.89,
+        "random_buyer": 17727.97,
+        "random": 15495.14
+      }
     }
   ]
 }
