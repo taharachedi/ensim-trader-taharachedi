@@ -3236,6 +3236,76 @@
         "random_seller": 18005.8,
         "random": 15397.33
       }
+    },
+    {
+      "run_at": "2026-11-26T03:57:23Z",
+      "market_tick": 381,
+      "registered": true,
+      "money": 247.52,
+      "holdings": {
+        "A": 186.9,
+        "B": 1639.76,
+        "C": 0.0
+      },
+      "decision": {
+        "A": 0.424,
+        "B": -0.262,
+        "C": -1.0
+      },
+      "details": {
+        "A": {
+          "signal": 1.0,
+          "period": 48,
+          "r2": 0.981,
+          "price": 4.6568,
+          "forecast": 5.6679,
+          "horizon": 14,
+          "expected_move_pct": 21.71,
+          "reason": "buy: cycle 48 ticks (R2 0.98) forecasts +21.7% in 14 ticks",
+          "final": 0.424
+        },
+        "B": {
+          "signal": -0.262,
+          "period": 96,
+          "r2": 0.986,
+          "price": 12.5156,
+          "forecast": 12.1828,
+          "horizon": 28,
+          "expected_move_pct": -2.66,
+          "reason": "sell: cycle 96 ticks (R2 0.99) forecasts -2.7% in 28 ticks",
+          "final": -0.262
+        },
+        "C": {
+          "signal": -1.0,
+          "period": 24,
+          "r2": 0.978,
+          "price": 1.333,
+          "forecast": 0.7697,
+          "horizon": 7,
+          "expected_move_pct": -42.26,
+          "reason": "sell: cycle 24 ticks (R2 0.98) forecasts -42.3% in 7 ticks",
+          "final": -1.0
+        }
+      },
+      "leaderboard": {
+        "taharachedi": 21640.53,
+        "gaspard": 20458.05,
+        "joel": 19521.9,
+        "clement": 19509.45,
+        "ismail_achibat": 19508.6,
+        "franck": 19505.49,
+        "eric-lefebvre": 19505.49,
+        "paul_transon": 19505.49,
+        "aziz": 19505.49,
+        "warren": 19503.55,
+        "random_buyer": 19402.35,
+        "molivier": 19342.84,
+        "salmazaime": 19325.26,
+        "random_trader": 18933.64,
+        "tester": 18832.4,
+        "random_seller": 18005.8,
+        "random": 15457.35
+      }
     }
   ]
 }
