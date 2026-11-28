@@ -3670,6 +3670,79 @@
         "tester": 18845.54,
         "random_seller": 18005.8
       }
+    },
+    {
+      "run_at": "2026-11-28T04:52:48Z",
+      "market_tick": 388,
+      "registered": true,
+      "money": 1402.51,
+      "holdings": {
+        "A": 711.8,
+        "B": 1338.36,
+        "C": 0.0
+      },
+      "decision": {
+        "A": 0.584,
+        "B": -0.703,
+        "C": -1.0
+      },
+      "details": {
+        "A": {
+          "signal": 0.584,
+          "period": 48,
+          "r2": 0.98,
+          "price": 5.258,
+          "forecast": 5.571,
+          "horizon": 14,
+          "expected_move_pct": 5.95,
+          "reason": "buy: cycle 48 ticks (R2 0.98) forecasts +6.0% in 14 ticks",
+          "final": 0.584
+        },
+        "B": {
+          "signal": -0.703,
+          "period": 96,
+          "r2": 0.987,
+          "price": 12.7085,
+          "forecast": 11.8028,
+          "horizon": 28,
+          "expected_move_pct": -7.13,
+          "reason": "sell: cycle 96 ticks (R2 0.99) forecasts -7.1% in 28 ticks",
+          "final": -0.703
+        },
+        "C": {
+          "signal": -1.0,
+          "period": 24,
+          "r2": 0.978,
+          "price": 0.9111,
+          "forecast": 0.7392,
+          "horizon": 7,
+          "expected_move_pct": -18.87,
+          "reason": "sell: cycle 24 ticks (R2 0.98) forecasts -18.9% in 7 ticks",
+          "final": -1.0
+        }
+      },
+      "leaderboard": {
+        "taharachedi": 22153.79,
+        "gaspard": 21119.59,
+        "joel": 20224.49,
+        "salmazaime": 20197.87,
+        "ismail_achibat": 20140.73,
+        "molivier": 20061.86,
+        "e2606220": 19895.41,
+        "eric-lefebvre": 19892.19,
+        "mayahamdy": 19890.38,
+        "clement": 19887.59,
+        "hendzormati": 19884.33,
+        "paul_transon": 19881.08,
+        "franck": 19877.63,
+        "aziz": 19877.63,
+        "lodesthard": 19874.08,
+        "random_buyer": 19814.59,
+        "warren": 19803.44,
+        "random_trader": 19800.63,
+        "tester": 18845.54,
+        "random_seller": 18005.8
+      }
     }
   ]
 }
